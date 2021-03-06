@@ -27,10 +27,16 @@ export class ActivityService {
             return apiResponse.errorResponse('Insufficient Quantity in Store');
         }
 
-        const activity = this.activityRepository.create({...data, inventory});
+        const activity = this.activityRepository.create({...data, inventory, user: user.username});
 
         await this.activityRepository.save(activity);
 
         return apiResponse.successResponseWithData('Activity Logged', activity)
+    }
+
+    async getActivities(){
+        const activities = await this.activityRepository.find();
+
+        return apiResponse.successResponseWithData('Fetched all Activities', activities);
     }
 }
