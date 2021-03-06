@@ -58,4 +58,10 @@ export class InventoryService {
 
         return apiResponse.successResponse('Inventory Deleted');
     }
+
+    async getInventories(){
+        const inventories = await this.inventoryRepository.find();
+
+        return apiResponse.successResponseWithData('Inventories Fetched', inventories);
+    }
 }
