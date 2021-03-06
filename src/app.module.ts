@@ -12,7 +12,7 @@ import { ActivityModule } from './activity/activity.module';
 
 @Module({
   imports: [UserModule, TypeOrmModule.forRoot(), InventoryModule, ActivityModule],
-  controllers: [AppController, ActivityController],
+  controllers: [AppController],
   providers: [AppService, {
     provide: APP_FILTER,
     useClass: HttpErrorFilter
