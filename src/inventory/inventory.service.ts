@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { apiResponse } from 'src/helpers/apiResponse';
+import { IUser } from 'src/user/user.dto';
 import { Repository } from 'typeorm';
 import { InventoryDTO } from './inventory.dto';
 import { InventoryEntity } from './inventory.entity';
@@ -24,5 +25,21 @@ export class InventoryService {
         await this.inventoryRepository.save(inventory);
 
         return apiResponse.successResponseWithData('Inventory Added', inventory);
+    }
+
+    async updateInventory(id: number, data: Partial<InventoryDTO>, user: IUser){
+        if(user.role !== 'admin') {
+            return apiResponse.unauthorizedResponse('Unauthorised');
+        }
+
+        const inventory = this.inventoryRepository.findOne(id);
+
+        if(!inventory){
+            return apiResponse.notFoundResponse('Inventory not Found');
+        }
+
+        await this.inventoryRepository.update({id}, data);
+
+        return apiResponse.successResponse('Inventory Updated');
     }
 }
