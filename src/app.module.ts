@@ -6,9 +6,10 @@ import { AppService } from './app.service';
 import { HttpErrorFilter } from './shared/http-error.filter';
 import { LoggingInterceptor } from './shared/loggin.interceptor';
 import { UserModule } from './user/user.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forRoot()],
+  imports: [UserModule, TypeOrmModule.forRoot(), InventoryModule],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_FILTER,
