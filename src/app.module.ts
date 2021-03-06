@@ -7,10 +7,12 @@ import { HttpErrorFilter } from './shared/http-error.filter';
 import { LoggingInterceptor } from './shared/loggin.interceptor';
 import { UserModule } from './user/user.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { ActivityController } from './activity/activity.controller';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forRoot(), InventoryModule],
-  controllers: [AppController],
+  imports: [UserModule, TypeOrmModule.forRoot(), InventoryModule, ActivityModule],
+  controllers: [AppController, ActivityController],
   providers: [AppService, {
     provide: APP_FILTER,
     useClass: HttpErrorFilter
