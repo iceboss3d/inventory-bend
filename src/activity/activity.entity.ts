@@ -12,7 +12,7 @@ export class ActivityEntity {
     @UpdateDateColumn()
     updated: Date;
 
-    @ManyToOne(() => InventoryEntity)
+    @ManyToOne(() => InventoryEntity, {cascade: true, eager: true})
     @JoinColumn()
     inventory: InventoryEntity;
 
