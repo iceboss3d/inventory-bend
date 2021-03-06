@@ -42,4 +42,20 @@ export class InventoryService {
 
         return apiResponse.successResponse('Inventory Updated');
     }
+
+    async deleteInventory(id: number, user: IUser){
+        if(user.role !== 'admin') {
+            return apiResponse.unauthorizedResponse('Unauthorised');
+        }
+
+        const inventory = this.inventoryRepository.findOne(id);
+
+        if(!inventory){
+            return apiResponse.notFoundResponse('Inventory not Found');
+        }
+
+        await this.inventoryRepository.delete({id});
+
+        return apiResponse.successResponse('Inventory Deleted');
+    }
 }
