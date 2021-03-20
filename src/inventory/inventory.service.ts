@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ActivityDTO } from 'src/activity/activity.dto';
+import { ActivityEntity } from 'src/activity/activity.entity';
 import { apiResponse } from 'src/helpers/apiResponse';
 import { IUser } from 'src/user/user.dto';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { InventoryDTO } from './inventory.dto';
 import { InventoryEntity } from './inventory.entity';
 
@@ -10,7 +12,9 @@ import { InventoryEntity } from './inventory.entity';
 export class InventoryService {
     constructor(
         @InjectRepository(InventoryEntity)
-        private inventoryRepository: Repository<InventoryEntity>
+        private inventoryRepository: Repository<InventoryEntity>,
+        @InjectRepository(ActivityEntity)
+        private activityRepository: Repository<ActivityEntity>
     ) { }
 
     async addInventory(data: InventoryDTO){
@@ -32,10 +36,19 @@ export class InventoryService {
             return apiResponse.unauthorizedResponse('Unauthorised');
         }
 
-        const inventory = this.inventoryRepository.findOne(id);
+        const inventory = await this.inventoryRepository.findOne(id);
+
+        console.log(inventory);
+        
 
         if(!inventory){
             return apiResponse.notFoundResponse('Inventory not Found');
+        }
+
+        const checkName = await this.inventoryRepository.findOne({where: {name: data.name, id: Not(id)}});
+
+        if(checkName){
+            return apiResponse.existingResponse('Inventory with such name already exist');
         }
 
         await this.inventoryRepository.update({id}, data);
@@ -63,5 +76,32 @@ export class InventoryService {
         const inventories = await this.inventoryRepository.find();
 
         return apiResponse.successResponseWithData('Inventories Fetched', inventories);
+    }
+
+    async getInventory(id: number){
+        const inventory = await this.inventoryRepository.findOne(id);
+
+        return apiResponse.successResponseWithData('Inventories Fetched', inventory);
+    }
+
+    async removeItem(data: ActivityDTO, user: IUser){
+        const inventory = await this.inventoryRepository.findOne({where: {id: data.inventory}});
+        if(!inventory){
+            return apiResponse.notFoundResponse('Inventory not Found');
+        }
+
+        if(data.noOfUnits > inventory.noOfUnits){
+            return apiResponse.errorResponse("Insufficient Units");
+        }
+
+        const unitsLeft = inventory.noOfUnits - data.noOfUnits;
+
+        await this.inventoryRepository.update({id: data.inventory}, {noOfUnits: unitsLeft});
+
+        const activity = this.activityRepository.create({...data, inventory, user: user.username});
+
+        await this.activityRepository.save(activity);
+
+        return apiResponse.successResponse('Inventory Updated');
     }
 }

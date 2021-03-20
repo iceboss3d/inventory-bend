@@ -29,6 +29,13 @@ export class ActivityService {
 
         const activity = this.activityRepository.create({...data, inventory, user: user.username});
 
+        const noOfUnits = inventory.noOfUnits - data.noOfUnits;
+        console.log(noOfUnits);
+        
+        await this.inventoryRepository.update({id: data.inventory}, {noOfUnits});
+        const newIn = await this.inventoryRepository.findOne({where: {id: inventory.id}});
+        console.log(newIn);
+        
         await this.activityRepository.save(activity);
 
         return apiResponse.successResponseWithData('Activity Logged', activity)

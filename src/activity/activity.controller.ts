@@ -7,17 +7,17 @@ import { ActivityService } from './activity.service';
 
 @Controller('api/activity')
 export class ActivityController {
-    constructor(private activityService: ActivityService) {}
+  constructor(private activityService: ActivityService) {}
 
-    @Post('log')
-    @UseGuards(new AuthGuard())
-    logActivity(@Body() data: ActivityDTO, @User() user: IUser){
-        return this.activityService.recordActivity(data, user);
-    }
+  @Post('log')
+  @UseGuards(new AuthGuard())
+  logActivity(@Body() data: ActivityDTO, @User() user: IUser) {
+    return this.activityService.recordActivity(data, user);
+  }
 
-    @Get()
-    @UseGuards(new AuthGuard())
-    getActivities(){
-        return this.activityService.getActivities();
-    }
+  @Get()
+  @UseGuards(new AuthGuard())
+  getActivities() {
+    return this.activityService.getActivities();
+  }
 }
