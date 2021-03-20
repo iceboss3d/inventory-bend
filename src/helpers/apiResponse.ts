@@ -28,7 +28,7 @@ const apiResponse = {
             status: false,
             message: msg
         }
-        return new HttpException(data, HttpStatus.BAD_REQUEST);
+        return new HttpException(data, HttpStatus.FORBIDDEN);
     },
     unauthorizedResponse: (msg: string) => {
         const data: Object = {

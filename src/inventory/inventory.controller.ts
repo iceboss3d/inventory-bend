@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ActivityDTO } from 'src/activity/activity.dto';
 import { AuthGuard } from 'src/shared/auth.guard';
 import { User } from 'src/user/user.decorator';
 import { IUser } from 'src/user/user.dto';
@@ -31,5 +32,17 @@ export class InventoryController {
     @UseGuards(new AuthGuard())
     getInventories(){
         return this.inventoryService.getInventories();
+    }
+
+    @Get('single/:id')
+    @UseGuards(new AuthGuard())
+    getInventory(@Param('id') id: number){
+        return this.inventoryService.getInventory(id);
+    }
+
+    @Post('activity')
+    @UseGuards(new AuthGuard())
+    remove(@Body() data: ActivityDTO, @User() user: IUser) {
+        return this.inventoryService.removeItem(data, user);
     }
 }
